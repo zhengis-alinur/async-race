@@ -1,0 +1,21 @@
+@import '../../UI/style-variables.scss';
+
+.car-form {
+  display: flex;
+  flex-direction: column;
+}
+
+form {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+input {
+  margin: 5px;
+}
+
+.car-table {
+  display: flex;
+  flex-direction: column;
+  min-height: 833px;
+}

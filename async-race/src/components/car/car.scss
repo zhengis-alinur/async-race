@@ -1,0 +1,42 @@
+@import '../../UI/style-variables.scss';
+.car {
+  border-bottom: dashed 4px #FFF;
+  margin-top: 25px;
+  min-height: 90px;
+}
+.car-img {
+  position: relative;
+  left: 10px;
+  top: 10px;  
+}
+.car-name {
+  color: #{$car-name-color};
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.car-engine-show {
+  display: flex;
+  position: relative;
+  top: 15px;
+  .car-engine-btns {
+    position: relative;
+    top: -5px;
+  }
+}
+
+.engine-btn {
+  padding: 10px;
+  margin: 0 5px;
+  background-color: #000;
+  color: greenyellow;
+  border: solid 2px greenyellow;
+  &:disabled {
+    color: gray;
+    border: solid 2px gray;
+  }
+}
+
+svg {
+  transition: transform .1s linear;
+}
