@@ -1,6 +1,6 @@
 import { deleteCar, startCar, stopCar } from '../../api';
 import { BaseComponent } from '../BaseComponent';
-import { createElem } from '../../shared/functions';
+import { createElem, getPosition } from '../../shared/functions';
 import './car.scss';
 
 export class Car extends BaseComponent {
@@ -48,6 +48,7 @@ export class Car extends BaseComponent {
     </svg>
     `);
     const selectBtn = createElem('button', 'blue-btn', 'select');
+    selectBtn.classList.add('select');
     selectBtn.addEventListener('click', () => {
       const carSelectedEvent = new CustomEvent('carSelected', {
         bubbles: true,
@@ -90,16 +91,25 @@ export class Car extends BaseComponent {
 
   race(velocity: number, distance: number) {
     const carElem = document.getElementById(`car-${this.id}`);
-    const shift = velocity / 4;
+    const shift = velocity / 16;
     let speed = shift;
     this.timer = setInterval(() => {
       if (this.stopped) {
         if (carElem !== null) {
-          (<HTMLElement>carElem).style.transform = `translateX(${speed}px)`;
-          speed += shift;
+          if (getPosition(carElem).left >= document.documentElement.clientWidth - 300) {
+            this.stopped = false;
+            const carFinish = new CustomEvent('carFinish', {
+              bubbles: true,
+              detail: { id: this.id },
+            });
+            this.element.dispatchEvent(carFinish);
+          } else {
+            (<HTMLElement>carElem).style.transform = `translateX(${speed}px)`;
+            speed += shift;
+          }
         }
       }
-    }, 100);
+    }, 25);
   }
 
   async reset() {
@@ -110,6 +120,8 @@ export class Car extends BaseComponent {
     await stopCar(this.id);
     const carElem = document.getElementById(`car-${this.id}`);
     (<HTMLElement>carElem).style.transform = 'translateX(0)';
+    this.ABtn.removeAttribute('disabled');
+    this.BBtn.setAttribute('disabled', 'true');
   }
 
   async startCar() {

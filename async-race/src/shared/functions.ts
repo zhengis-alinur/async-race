@@ -5,3 +5,11 @@ export function createElem(tag: keyof HTMLElementTagNameMap, className: string, 
   elem.innerHTML = innerHTML;
   return elem;
 }
+
+export function getPosition(el: HTMLElement) {
+  const rect = el.getBoundingClientRect();
+  return {
+    left: rect.left + window.scrollX,
+    top: rect.top + window.scrollY,
+  };
+}

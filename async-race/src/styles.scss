@@ -29,6 +29,10 @@ button {
   &.green-btn {
     background-color: #{$green-btn};
     border-bottom: solid 5px #{$green-btn-border};
+    &:disabled {
+      background-color: #878d9c;
+      border-bottom: solid 5px #273a59;
+    }
   }
   &.blue-btn {
     background-color: #{$blue-btn};
@@ -36,6 +40,12 @@ button {
     &:disabled {
       background-color: #878d9c;
       border-bottom: solid 5px #273a59;
+    }
+    &.select {
+      &:focus {
+        background-color: #878d9c;
+        border-bottom: solid 5px #273a59;
+      }
     }
   }
   &:active {

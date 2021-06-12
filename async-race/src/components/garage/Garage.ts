@@ -38,6 +38,9 @@ export class Garage extends BaseComponent {
       this.displayCars(this.page + 1, 7);
       this.page++;
     });
+    document.body.addEventListener('carFinish', (e) => {
+      console.log((<CustomEvent>e).detail.id);
+    });
   }
 
   async displayCars(page: number, limit: number) {
@@ -87,12 +90,20 @@ export class Garage extends BaseComponent {
     });
     updateForm.append(this.updateBtn);
     const btns = createElem('div', 'race-btns', '');
-    const raceButton = createElem('button', 'race-btn', 'race');
+    const raceButton = createElem('button', 'green-btn', 'race');
+    const resetButton = createElem('button', 'green-btn', 'reset');
+    resetButton.setAttribute('disabled', 'true');
     raceButton.addEventListener('click', () => {
+      resetButton.removeAttribute('disabled');
+      raceButton.setAttribute('disabled', 'true');
       this.raceAllCars();
     });
-    const resetButton = createElem('button', 'reset-btn', 'reset');
-    const generateButton = createElem('button', 'generate-btn', 'generate');
+    resetButton.addEventListener('click', () => {
+      raceButton.removeAttribute('disabled');
+      resetButton.setAttribute('disabled', 'true');
+      this.resetAllCars();
+    });
+    const generateButton = createElem('button', 'blue-btn', 'generate');
     btns.append(raceButton, resetButton, generateButton);
     this.carForm.append(createForm, updateForm, btns);
   }
@@ -104,6 +115,12 @@ export class Garage extends BaseComponent {
   raceAllCars() {
     this.carElements.forEach((val) => {
       val.startCar();
+    });
+  }
+
+  resetAllCars() {
+    this.carElements.forEach((val) => {
+      val.reset();
     });
   }
 }

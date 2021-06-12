@@ -1,9 +1,19 @@
 import { createCar, getCars } from './api';
 import { Garage } from './components/garage/Garage';
 import { Header } from './components/header/Header';
+import { Winners } from './components/winners/Winners';
 import './styles.scss';
 
-const header = new Header();
-document.body.append(header.element);
 const garagePage = new Garage();
-document.body.append(garagePage.element);
+const winnersPage = new Winners();
+const header = new Header();
+header.toGarageButton.addEventListener('click', () => {
+  garagePage.element.style.visibility = 'visible';
+  winnersPage.element.style.visibility = 'hidden';
+});
+header.toWinnersButton.addEventListener('click', () => {
+  garagePage.element.style.visibility = 'hidden';
+  winnersPage.element.style.visibility = 'visible';
+});
+document.body.append(header.element);
+document.body.append(garagePage.element, winnersPage.element);

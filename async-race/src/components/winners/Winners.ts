@@ -2,6 +2,7 @@ import { BaseComponent } from '../BaseComponent';
 
 export class Winners extends BaseComponent {
   constructor() {
-    super('div', ['winners']);
+    super('div', ['winners-page']);
+    this.element.style.visibility = 'hidden';
   }
 }

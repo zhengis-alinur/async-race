@@ -3,10 +3,12 @@ import { createElem } from '../../shared/functions';
 import { BaseComponent } from '../BaseComponent';
 
 export class Header extends BaseComponent {
+  toGarageButton: HTMLElement = createElem('button', 'green-btn', 'to garage');
+
+  toWinnersButton: HTMLElement = createElem('button', 'green-btn', 'to winners');
+
   constructor() {
     super('header', ['header']);
-    const toGarageButton = createElem('button', 'green-btn', 'to garage');
-    const toWinnersButton = createElem('button', 'green-btn', 'to winners');
-    this.element.append(toGarageButton, toWinnersButton);
+    this.element.append(this.toGarageButton, this.toWinnersButton);
   }
 }
