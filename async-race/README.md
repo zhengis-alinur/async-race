@@ -1,5 +1,5 @@
-# Empty project template
-Empty project with configured webpack, typescript and es-lint
+This application is works with server in localhost.
+To test this app, you should start this json server (https://github.com/mikhama/async-race-api)
 
 ### Easy to use:
 + Download project files
