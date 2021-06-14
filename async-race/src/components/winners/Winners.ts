@@ -48,16 +48,16 @@ export class Winners extends BaseComponent {
     this.element.append(buttons);
     prevButton.addEventListener('click', () => {
       if (this.page !== 1) {
-        this.displayWinners(this.page - 1, 7, this.sort, this.order);
+        this.displayWinners(this.page - 1, 10, this.sort, this.order);
         this.page--;
       }
     });
     nextButton.addEventListener('click', () => {
-      this.displayWinners(this.page + 1, 7, this.sort, this.order);
+      this.displayWinners(this.page + 1, 10, this.sort, this.order);
       this.page++;
     });
     this.setSortListeners();
-    this.displayWinners(1, 7, 'time', 'ASC');
+    this.displayWinners(1, 10, 'time', 'ASC');
   }
 
   setSortListeners():void {
@@ -83,7 +83,7 @@ export class Winners extends BaseComponent {
     if (order) {
       this.sort = sort;
       this.order = order;
-      await this.displayWinners(1, 7, sort, order);
+      await this.displayWinners(1, 10, sort, order);
       el.removeAttribute('data-order');
       el.setAttribute('data-order', reverseOrder);
     }
