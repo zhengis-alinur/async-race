@@ -1,5 +1,13 @@
 @import '../../UI/style-variables.scss';
 
+.garage {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  padding: 30px;
+}
+
 .car-form {
   display: flex;
   flex-direction: column;

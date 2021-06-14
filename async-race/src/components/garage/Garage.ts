@@ -1,4 +1,4 @@
-import { createCar, getCars, startCar, updateCar } from '../../api';
+import { createCar, createWinner, getCar, getCars, getWinner, startCar, updateCar, updateWinner } from '../../api';
 import { createElem } from '../../shared/functions';
 import { BaseComponent } from '../BaseComponent';
 import { Car } from '../car/Car';
@@ -19,6 +19,16 @@ export class Garage extends BaseComponent {
 
   carForm: HTMLElement = createElem('div', 'car-form', '');
 
+  raceButton = createElem('button', 'green-btn', 'race');
+
+  resetButton = createElem('button', 'green-btn', 'reset');
+
+  winner?: number;
+
+  raceStartTime?: Date;
+
+  raceEndTime?: Date;
+
   constructor() {
     super('div', ['garage']);
     this.createCarForm();
@@ -38,16 +48,42 @@ export class Garage extends BaseComponent {
       this.displayCars(this.page + 1, 7);
       this.page++;
     });
-    document.body.addEventListener('carFinish', (e) => {
-      console.log((<CustomEvent>e).detail.id);
+    document.body.addEventListener('carFinish', async (e) => {
+      if (!this.winner) {
+        this.winner = (<CustomEvent> e).detail.id;
+        this.raceEndTime = new Date();
+        if (this.raceStartTime) {
+          const time = this.raceEndTime.getTime() - this.raceStartTime.getTime();
+          const { id } = (<CustomEvent> e).detail;
+          const winner = {
+            id: (<CustomEvent> e).detail.id,
+            wins: 1,
+            time: time / 1000,
+          };
+          const resp = await createWinner(winner);
+          if (resp.success === false) {
+            let updateCarWins;
+            await getWinner(id).then((val) => {
+              updateCarWins = val[0].wins;
+            });
+            if (updateCarWins) {
+              winner.wins = updateCarWins + 1;
+            }
+            await updateWinner(id, winner);
+          }
+        }
+      }
     });
   }
 
   async displayCars(page: number, limit: number) {
+    this.resetAllCars();
     this.carTable.innerHTML = '';
     const items = await getCars(page, limit).then((val) => {
       this.cars = val.items;
     });
+    this.carElements = [new Car('', '', 0)];
+    this.carElements.pop();
     this.cars.forEach((val) => {
       const car = new Car(val.name, val.color, val.id);
       this.carElements.push(car);
@@ -66,7 +102,6 @@ export class Garage extends BaseComponent {
       const name = (<HTMLInputElement>document.querySelector('#create-input')).value;
       const color = (<HTMLInputElement>document.querySelector('#create-car-color')).value;
       const newCar = { name, color };
-      console.log(newCar);
       createCar(newCar);
     });
 
@@ -90,21 +125,19 @@ export class Garage extends BaseComponent {
     });
     updateForm.append(this.updateBtn);
     const btns = createElem('div', 'race-btns', '');
-    const raceButton = createElem('button', 'green-btn', 'race');
-    const resetButton = createElem('button', 'green-btn', 'reset');
-    resetButton.setAttribute('disabled', 'true');
-    raceButton.addEventListener('click', () => {
-      resetButton.removeAttribute('disabled');
-      raceButton.setAttribute('disabled', 'true');
+    this.raceButton.addEventListener('click', () => {
       this.raceAllCars();
     });
-    resetButton.addEventListener('click', () => {
-      raceButton.removeAttribute('disabled');
-      resetButton.setAttribute('disabled', 'true');
-      this.resetAllCars();
+    this.resetButton.addEventListener('click', async () => {
+      await this.resetAllCars();
+      this.raceButton.removeAttribute('disabled');
+      this.resetButton.setAttribute('disabled', 'true');
     });
     const generateButton = createElem('button', 'blue-btn', 'generate');
-    btns.append(raceButton, resetButton, generateButton);
+    generateButton.addEventListener('click', () => {
+      this.generateCars();
+    });
+    btns.append(this.raceButton, this.resetButton, generateButton);
     this.carForm.append(createForm, updateForm, btns);
   }
 
@@ -112,15 +145,33 @@ export class Garage extends BaseComponent {
     this.displayCars(1, 7);
   }
 
-  raceAllCars() {
+  async raceAllCars() {
+    this.raceStartTime = new Date();
+    this.resetButton.removeAttribute('disabled');
+    this.raceButton.setAttribute('disabled', 'true');
     this.carElements.forEach((val) => {
       val.startCar();
     });
   }
 
-  resetAllCars() {
+  async resetAllCars() {
+    if (this.winner) {
+      this.winner = undefined;
+    }
     this.carElements.forEach((val) => {
       val.reset();
     });
+  }
+
+  generateCars() {
+    const brands = ['BMW', 'Audi', 'aston martin', 'mercedes', 'lada', 'land rover', 'toyota', 'volvo', 'tesla', 'ssang yong', 'ford', 'porshe', 'mazda', 'nissan', 'Volkswagen'];
+    const models = ['mustang', '100', 'niva', 'x-trail', 'cayman', 'range', 'camry', '3', 'prado', 'cayenn', 'explorer', '80', 'r8', 'gtr', 'polo'];
+    for (let i = 0; i < 100; i++) {
+      const name = `${brands[Math.floor(Math.random() * brands.length)]} ${models[Math.floor(Math.random() * models.length)]}`;
+      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      const newCar = { name, randomColor };
+      createCar(newCar);
+    }
+    this.displayCars(this.page, 7);
   }
 }

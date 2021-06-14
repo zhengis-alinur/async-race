@@ -1,0 +1,31 @@
+.winners-page {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 30px;
+}
+
+.winners-table {
+  display: felx;
+  flex-direction: column;
+  svg {
+    position: relative;
+    left: -40px;
+    top: -10px;
+    min-width: 100px;
+  }
+  span {
+    min-width: 100px;
+    color: white;
+  }
+  .winners-title {
+    span {
+      font-weight: bold;
+    }
+  }
+}
+
+.winner-row, .winners-title {
+  display: flex;
+  margin-top: 10px;
+}

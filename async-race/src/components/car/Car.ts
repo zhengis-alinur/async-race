@@ -1,4 +1,4 @@
-import { deleteCar, startCar, stopCar } from '../../api';
+import { deleteCar, driveCar, startCar, stopCar } from '../../api';
 import { BaseComponent } from '../BaseComponent';
 import { createElem, getPosition } from '../../shared/functions';
 import './car.scss';
@@ -60,6 +60,7 @@ export class Car extends BaseComponent {
     removeBtn.addEventListener('click', async () => {
       if (this.id) {
         await deleteCar(this.id);
+        window.location.reload();
       }
     });
     const carName = createElem('span', 'car-name', `${this.name}`);
@@ -96,7 +97,7 @@ export class Car extends BaseComponent {
     this.timer = setInterval(() => {
       if (this.stopped) {
         if (carElem !== null) {
-          if (getPosition(carElem).left >= document.documentElement.clientWidth - 300) {
+          if (getPosition(carElem).left >= document.documentElement.clientWidth - 120) {
             this.stopped = false;
             const carFinish = new CustomEvent('carFinish', {
               bubbles: true,
@@ -135,6 +136,10 @@ export class Car extends BaseComponent {
       this.BBtn.removeAttribute('disabled');
       this.ABtn.setAttribute('disabled', 'true');
       this.race(velocity, distance);
+      const resp = await driveCar(this.id);
+      if (resp.success === false) {
+        this.stopped = false;
+      }
     }
   }
 }
