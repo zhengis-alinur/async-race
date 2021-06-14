@@ -60,7 +60,10 @@ export class Car extends BaseComponent {
     removeBtn.addEventListener('click', async () => {
       if (this.id) {
         await deleteCar(this.id);
-        window.location.reload();
+        const carDeletedEvent = new CustomEvent('carDeleted', {
+          bubbles: true,
+        });
+        this.element.dispatchEvent(carDeletedEvent);
       }
     });
     const carName = createElem('span', 'car-name', `${this.name}`);
@@ -90,7 +93,7 @@ export class Car extends BaseComponent {
     return this.carImg;
   }
 
-  race(velocity: number, distance: number) {
+  race(velocity: number, distance: number):void {
     const carElem = document.getElementById(`car-${this.id}`);
     const shift = velocity / 16;
     let speed = shift;
@@ -120,7 +123,9 @@ export class Car extends BaseComponent {
     this.stopped = true;
     await stopCar(this.id);
     const carElem = document.getElementById(`car-${this.id}`);
-    (<HTMLElement>carElem).style.transform = 'translateX(0)';
+    if (carElem) {
+      (<HTMLElement>carElem).style.transform = 'translateX(0)';
+    }
     this.ABtn.removeAttribute('disabled');
     this.BBtn.setAttribute('disabled', 'true');
   }

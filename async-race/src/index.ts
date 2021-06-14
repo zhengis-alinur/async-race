@@ -18,6 +18,9 @@ header.toWinnersButton.addEventListener('click', () => {
   garagePage.element.style.visibility = 'hidden';
   winnersPage.element.style.visibility = 'visible';
 });
+document.body.addEventListener('carFinish', () => {
+  winnersPage.displayWinners(winnersPage.page, 7, 'time', 'ASC');
+});
 document.body.append(header.element);
 main.append(garagePage.element, winnersPage.element, winnerTitle);
 document.body.append(main);

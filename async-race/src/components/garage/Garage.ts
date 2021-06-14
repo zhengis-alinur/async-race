@@ -7,9 +7,9 @@ import './garage.scss';
 export class Garage extends BaseComponent {
   public page = 1;
 
-  private cars: { name: string, color: string, id: number }[] = [{ name: '', color: '', id: 0 }];
+  private cars?: { name: string, color: string, id: number }[];
 
-  public carElements: Car[] = [new Car('', '', 0)];
+  public carElements?: Car[];
 
   public updateBtn?: HTMLElement;
 
@@ -22,6 +22,10 @@ export class Garage extends BaseComponent {
   raceButton = createElem('button', 'green-btn', 'race');
 
   resetButton = createElem('button', 'green-btn', 'reset');
+
+  carsNum = createElem('div', 'cars-num', '');
+
+  pageNum = createElem('div', 'page-num', '');
 
   winner?: number;
 
@@ -37,7 +41,7 @@ export class Garage extends BaseComponent {
     const prevButton = createElem('button', 'green-btn', 'prev');
     const nextButton = createElem('button', 'green-btn', 'next');
     buttons.append(prevButton, nextButton);
-    this.element.append(this.carForm, this.carTable, buttons);
+    this.element.append(this.carForm, this.carsNum, this.pageNum, this.carTable, buttons);
     prevButton.addEventListener('click', () => {
       if (this.page !== 1) {
         this.displayCars(this.page - 1, 7);
@@ -84,16 +88,22 @@ export class Garage extends BaseComponent {
   async displayCars(page: number, limit: number) {
     this.resetAllCars();
     this.carTable.innerHTML = '';
-    const items = await getCars(page, limit).then((val) => {
+    await getCars(page, limit).then((val) => {
       this.cars = val.items;
+      this.carsNum.innerHTML = `Garage(${val.count})`;
+      this.pageNum.innerHTML = `Page #${page}`;
     });
     this.carElements = [new Car('', '', 0)];
     this.carElements.pop();
-    this.cars.forEach((val) => {
-      const car = new Car(val.name, val.color, val.id);
-      this.carElements.push(car);
-      this.carTable.append(car.element);
-    });
+    if (this.cars) {
+      this.cars.forEach((val) => {
+        const car = new Car(val.name, val.color, val.id);
+        if (this.carElements) {
+          this.carElements.push(car);
+        }
+        this.carTable.append(car.element);
+      });
+    }
   }
 
   createCarForm() {
@@ -132,6 +142,9 @@ export class Garage extends BaseComponent {
         this.selectedCarId = (<CustomEvent>event).detail.id;
       }
     });
+    document.body.addEventListener('carDeleted', () => {
+      this.displayCars(this.page, 7);
+    });
     updateForm.append(this.updateBtn);
     const btns = createElem('div', 'race-btns', '');
     this.raceButton.addEventListener('click', () => {
@@ -150,7 +163,7 @@ export class Garage extends BaseComponent {
     this.carForm.append(createForm, updateForm, btns);
   }
 
-  createCarTable() {
+  createCarTable():void {
     this.displayCars(1, 7);
   }
 
@@ -158,18 +171,26 @@ export class Garage extends BaseComponent {
     this.raceStartTime = new Date();
     this.resetButton.removeAttribute('disabled');
     this.raceButton.setAttribute('disabled', 'true');
-    this.carElements.forEach((val) => {
-      val.startCar();
-    });
+    if (this.carElements) {
+      this.carElements.forEach((val) => {
+        val.startCar();
+      });
+    }
   }
 
   async resetAllCars() {
+    const winnerTitle = document.querySelector('.winner-title');
+    if (winnerTitle) {
+      (<HTMLElement> winnerTitle).style.visibility = 'hidden';
+    }
     if (this.winner) {
       this.winner = undefined;
     }
-    this.carElements.forEach((val) => {
-      val.reset();
-    });
+    if (this.carElements) {
+      this.carElements.forEach((val) => {
+        val.reset();
+      });
+    }
   }
 
   async generateCars() {
@@ -183,9 +204,7 @@ export class Garage extends BaseComponent {
         color += letters[Math.floor(Math.random() * 16)];
       }
       const newCar = { name, color };
-      createCar(newCar).then((val) => {
-        console.log(val);
-      });
+      createCar(newCar);
     }
     this.displayCars(this.page, 7);
   }
