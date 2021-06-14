@@ -60,6 +60,11 @@ export class Garage extends BaseComponent {
             wins: 1,
             time: time / 1000,
           };
+          const winnerTitle = document.querySelector('.winner-title');
+          if (winnerTitle) {
+            winnerTitle.innerHTML = `Winner is ${(<CustomEvent> e).detail.name} (${time / 1000}s)`;
+            (<HTMLElement> winnerTitle).style.visibility = 'visible';
+          }
           const resp = await createWinner(winner);
           if (resp.success === false) {
             let updateCarWins;
@@ -93,7 +98,7 @@ export class Garage extends BaseComponent {
 
   createCarForm() {
     const createForm = createElem('form', 'create-form', `
-      <input type="text" id="create-input" name="name">
+      <input type="text" id="create-input" name="create-car">
       <input type="color" id="create-car-color" name="color">
     `);
     const createBtn = createElem('button', 'blue-btn', 'create');
@@ -106,9 +111,12 @@ export class Garage extends BaseComponent {
     });
 
     const updateForm = createElem('form', 'update-form', `
-      <input type="text" id="update-input" name="update-car">
       <input type="color" id="update-car-color" name="color">
     `);
+    const updateInput = createElem('input', '', '');
+    updateInput.setAttribute('type', 'text');
+    updateInput.setAttribute('id', 'update-input');
+    updateForm.prepend(updateInput);
     this.updateBtn = createElem('button', 'blue-btn', 'update');
     this.updateBtn.setAttribute('disabled', 'true');
     this.updateBtn.addEventListener('click', () => {
@@ -119,6 +127,7 @@ export class Garage extends BaseComponent {
     });
     document.body.addEventListener('carSelected', (event) => {
       if (this.updateBtn) {
+        (<HTMLInputElement>updateInput).value = (<CustomEvent>event).detail.name;
         this.updateBtn.removeAttribute('disabled');
         this.selectedCarId = (<CustomEvent>event).detail.id;
       }
@@ -134,8 +143,8 @@ export class Garage extends BaseComponent {
       this.resetButton.setAttribute('disabled', 'true');
     });
     const generateButton = createElem('button', 'blue-btn', 'generate');
-    generateButton.addEventListener('click', () => {
-      this.generateCars();
+    generateButton.addEventListener('click', async () => {
+      await this.generateCars();
     });
     btns.append(this.raceButton, this.resetButton, generateButton);
     this.carForm.append(createForm, updateForm, btns);
@@ -163,14 +172,20 @@ export class Garage extends BaseComponent {
     });
   }
 
-  generateCars() {
-    const brands = ['BMW', 'Audi', 'aston martin', 'mercedes', 'lada', 'land rover', 'toyota', 'volvo', 'tesla', 'ssang yong', 'ford', 'porshe', 'mazda', 'nissan', 'Volkswagen'];
-    const models = ['mustang', '100', 'niva', 'x-trail', 'cayman', 'range', 'camry', '3', 'prado', 'cayenn', 'explorer', '80', 'r8', 'gtr', 'polo'];
+  async generateCars() {
+    const brands = ['BMW', 'Audi', 'Aston Martin', 'Mercedes', 'Lada', 'Land Rover', 'Toyota', 'Volvo', 'Tesla', 'Ssang yong', 'Ford', 'Porshe', 'Mazda', 'Nissan', 'Volkswagen'];
+    const models = ['Mustang', '100', 'Niva', 'X-trail', 'Cayman', 'Range', 'Camry', '3', 'Prado', 'Cayenn', 'Explorer', '80', 'R8', 'GTR', 'Polo'];
     for (let i = 0; i < 100; i++) {
       const name = `${brands[Math.floor(Math.random() * brands.length)]} ${models[Math.floor(Math.random() * models.length)]}`;
-      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-      const newCar = { name, randomColor };
-      createCar(newCar);
+      const letters = '0123456789abcdef';
+      let color = '#';
+      for (let j = 0; j < 6; j++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      const newCar = { name, color };
+      createCar(newCar).then((val) => {
+        console.log(val);
+      });
     }
     this.displayCars(this.page, 7);
   }

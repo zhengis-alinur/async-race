@@ -8,7 +8,8 @@ import './styles.scss';
 const garagePage = new Garage();
 const winnersPage = new Winners();
 const header = new Header();
-const main = createElem('main', 'main','');
+const main = createElem('main', 'main', '');
+const winnerTitle = createElem('p', 'winner-title', '');
 header.toGarageButton.addEventListener('click', () => {
   garagePage.element.style.visibility = 'visible';
   winnersPage.element.style.visibility = 'hidden';
@@ -18,5 +19,5 @@ header.toWinnersButton.addEventListener('click', () => {
   winnersPage.element.style.visibility = 'visible';
 });
 document.body.append(header.element);
-main.append(garagePage.element, winnersPage.element);
+main.append(garagePage.element, winnersPage.element, winnerTitle);
 document.body.append(main);

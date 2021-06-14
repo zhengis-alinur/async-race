@@ -52,7 +52,7 @@ export class Car extends BaseComponent {
     selectBtn.addEventListener('click', () => {
       const carSelectedEvent = new CustomEvent('carSelected', {
         bubbles: true,
-        detail: { id: this.id },
+        detail: { id: this.id, name: this.name },
       });
       this.element.dispatchEvent(carSelectedEvent);
     });
@@ -101,7 +101,7 @@ export class Car extends BaseComponent {
             this.stopped = false;
             const carFinish = new CustomEvent('carFinish', {
               bubbles: true,
-              detail: { id: this.id },
+              detail: { id: this.id, name: this.name },
             });
             this.element.dispatchEvent(carFinish);
           } else {

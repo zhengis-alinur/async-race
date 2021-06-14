@@ -19,6 +19,18 @@ h1 {
 
 main {
   position: relative;
+  width: 100%;
+}
+
+.winner-title {
+  position: absolute;
+  top: 100px;
+  left: 30vw;
+  font-size: 50px;
+  text-shadow: #5dc8e5 5 5 20px;
+  visibility: hidden;
+  color: yellow;
+  z-index: 10;
 }
 
 button {
