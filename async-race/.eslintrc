@@ -20,6 +20,7 @@
     "no-plusplus": "off",
     "no-console": "warn",
     "max-len": ["warn", { "code": 120 }],
+    "linebreak-style": 0,
     "indent": ["warn", 2, {
       "SwitchCase": 1
     }],

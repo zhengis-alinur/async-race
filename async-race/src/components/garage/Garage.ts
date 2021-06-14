@@ -1,4 +1,6 @@
-import { createCar, createWinner, getCar, getCars, getWinner, startCar, updateCar, updateWinner } from '../../api';
+import {
+  createCar, createWinner, getCar, getCars, getWinner, startCar, updateCar, updateWinner,
+} from '../../api';
 import { createElem } from '../../shared/functions';
 import { BaseComponent } from '../BaseComponent';
 import { Car } from '../car/Car';

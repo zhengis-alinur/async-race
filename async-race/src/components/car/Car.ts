@@ -1,4 +1,6 @@
-import { deleteCar, driveCar, startCar, stopCar } from '../../api';
+import {
+  deleteCar, driveCar, startCar, stopCar,
+} from '../../api';
 import { BaseComponent } from '../BaseComponent';
 import { createElem, getPosition } from '../../shared/functions';
 import './car.scss';
